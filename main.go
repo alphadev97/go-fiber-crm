@@ -34,7 +34,13 @@ func main() {
 	app := fiber.New()
 	initDatabase()
 	setupRoutes(app)
+	defer func() {
+		sqlDB, err := database.DBConn.DB()
+		if err != nil {
+			panic("Failed to get database")
+		}
+		sqlDB.Close()
+	}()
 	app.Listen(3000)
-	defer database.DBConn.Close()
 
 }
